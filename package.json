@@ -1,9 +1,10 @@
 {
-  "name": "threejs-geojson",
+  "name": "@attx/threejs-geojson",
   "version": "1.0.0",
   "description": "Create threejs geometries from geojson",
-  "main": "index.js",
-  "typings": "index.d.ts",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": ["lib/*"],
   "scripts": {
     "build": "tsc"
   },
@@ -11,7 +12,6 @@
     "threejs",
     "geojson"
   ],
-  "author": "pxpusher",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.11.7",

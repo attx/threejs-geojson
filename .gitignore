@@ -1,2 +1,21 @@
-node_modules
 .DS_Store
+*.local
+
+# Directories
+node_modules
+coverage
+# lib
+
+# Logs
+logs
+*.log*
+
+# Editor directories and fles
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
