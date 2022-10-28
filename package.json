@@ -1,0 +1,22 @@
+{
+  "name": "threejs-geojson",
+  "version": "1.0.0",
+  "description": "Create threejs geometries from geojson",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "threejs",
+    "geojson"
+  ],
+  "author": "pxpusher",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.11.7",
+    "@types/three": "^0.144.0",
+    "three": "^0.146.0",
+    "typescript": "^4.8.4"
+  }
+}
