@@ -1,6 +1,6 @@
 # threejs-geojson
 
-![Preview](https://github.com/attx/threejs-geojson/blob/main/preview.png?raw=true)
+![](https://github.com/attx/threejs-geojson/blob/main/preview.png?raw=true)
 
 #### Example
 ```typescript
