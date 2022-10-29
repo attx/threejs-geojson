@@ -4,6 +4,8 @@
 
 #### Example
 ```typescript
+import { GeoJsonPreview } from "threejs-geojson";
+
 const roadMaterial = new MeshLambertMaterial({ color: 'lightgreen', emissive: '#000' });
 const buildingMaterial = new MeshLambertMaterial({ color: 'lightblue', emissive: '#000' });
 
