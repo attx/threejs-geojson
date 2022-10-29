@@ -1,4 +1,4 @@
-import { Feature, Position } from "@turf/turf";
+import { Feature, Polygon, LineString } from "@turf/turf";
 import { CatmullRomCurve3, ExtrudeGeometry, Shape, Vector2, Vector3 } from "three"
 
 export interface BuildOpts {
@@ -9,10 +9,10 @@ export interface BuildOpts {
 }
 
 export class GeoJsonPreview {
-  private polygonHeight: number
-  private lineStringWidth: number
-  private lineStringHeight: number
-  private lineStringSteps: number
+  private polygonHeight!: number
+  private lineStringWidth!: number
+  private lineStringHeight!: number
+  private lineStringSteps!: number
 
   private features: Feature[] | undefined
 
@@ -25,8 +25,7 @@ export class GeoJsonPreview {
     return this
   }
 
-  public build(features: unknown, opts: BuildOpts) {
-    this.features = features as Feature[]
+  public build(features: Feature[], opts: BuildOpts) {
     this.polygonHeight = opts.polygonHeight;
     this.lineStringWidth = opts.lineStringWidth;
     this.lineStringHeight = opts.lineStringHeight;
@@ -35,24 +34,24 @@ export class GeoJsonPreview {
     return this.createEntities(features);
   }
 
-  private createEntities(features) {
+  private createEntities(features: Feature[]) {
     const lineStringGeometries: ExtrudeGeometry[] = [];
     const polygonGeometries: ExtrudeGeometry[] = [];
 
     features.forEach((feature) => {
       if (feature.geometry.type === 'Polygon') {
-        const { coordinates } = feature.geometry
+        const { coordinates } = feature.geometry as Polygon
         coordinates.forEach((innerCoordinates) => {
           polygonGeometries.push(
-            this.createPolygonGeometry(innerCoordinates as Position[])
+            this.createPolygonGeometry(innerCoordinates)
           );
         })
       }
       
       if (feature.geometry.type === 'LineString') {
-        const { coordinates } = feature.geometry
+        const { coordinates } = feature.geometry as LineString
         lineStringGeometries.push(
-          this.createLineStringGeometry(coordinates as Position[])
+          this.createLineStringGeometry(coordinates)
         );
       }
     })
