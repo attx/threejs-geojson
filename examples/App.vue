@@ -5,91 +5,38 @@ import GeoJsonExample from "./assets/geojson.json";
 import ExampleElement from './components/ExampleElement.vue'
 
 const features = GeoJsonExample as FeatureCollection<Geometry, Properties>;
+
+const example = `
+const roadMaterial = new MeshLambertMaterial({ color: 'lightgreen', emissive: '#000' });
+const buildingMaterial = new MeshLambertMaterial({ color: 'lightblue', emissive: '#000' });
+
+const preview = new GeoJsonPreview();
+const { lineStringGeometries, polygonGeometries } = preview.build(features, {
+  polygonHeight: 1,
+  lineStringWidth: 1,
+  lineStringHeight: 1,
+  lineStringSteps: 96,
+});
+
+const roads = lineStringGeometries.map((feature) => new Mesh(feature, roadMaterial));
+const buildings = polygonGeometries.map((feature) => new Mesh(feature, buildingMaterial));
+
+scene.add(...roads, ...buildings);
+`.trim()
 </script>
 
 <template>
   <div class="row">
-    <div class="col">
-      <ExampleElement
-        title="size 20, parse"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :parse-size="20"
-      />
-      <ExampleElement
-        title="size 10, parse"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :parse-size="10"
-      />
-      <ExampleElement
-        title="size 40, parse"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :parse-size="40"
-      />
+    <div class="col-xs-12 text-center mb-32">
+      <h1>threejs-geojson</h1>
     </div>
-
-    <div class="col">
-      <ExampleElement
-        title="size 20, clip [20, 20]"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :clip="[20, 20]"
-        :parse-size="20"
-      />
-      <ExampleElement
-        title="size 40, clip [20, 20]"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :clip="[20, 20]"
-        :parse-size="40"
-      />
-      <ExampleElement
-        title="size 15, clip [20, 20]"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :clip="[20, 20]"
-        :parse-size="15"
-      />
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <ExampleElement :data="features" />
     </div>
-
-    <div class="col">
-      <ExampleElement
-        title="size 20, clip [100, 15]"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :clip="[100, 15]"
-        :parse-size="20"
-      />
-      <ExampleElement
-        title="size 40, clip [100, 15]"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :clip="[100, 15]"
-        :parse-size="40"
-      />
-      <ExampleElement
-        title="size 40, clip [100, 15]"
-        :data="features"
-        :center="[9.965747794929271, 53.574560899999994]"
-        :clip="[100, 10]"
-        :parse-size="15"
-      />
+    <div class="col-xs-12 col-md-6">
+      <pre>{{ example }}</pre>
     </div>
   </div>
 </template>
-
-<style scoped>
-.row {
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-}
-
-.col {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-</style>

@@ -1,12 +1,18 @@
-import type { Feature, Position } from "@turf/turf"
-import { CatmullRomCurve3, ExtrudeGeometry, Group, Material, Mesh, Shape, Vector2, Vector3 } from "three"
+import { Feature, Position } from "@turf/turf";
+import { CatmullRomCurve3, ExtrudeGeometry, Shape, Vector2, Vector3 } from "three"
+
+export interface BuildOpts {
+  polygonHeight: number
+  lineStringWidth: number
+  lineStringHeight: number
+  lineStringSteps: number
+}
 
 export class GeoJsonPreview {
-  private polygonGeometries = new Group()
-  private lineStringGeometries = new Group()
-  private lineStringWidth = 0.1
-  private polygonMaterial: Material | undefined
-  private lineStringMaterial: Material | undefined
+  private polygonHeight: number
+  private lineStringWidth: number
+  private lineStringHeight: number
+  private lineStringSteps: number
 
   private features: Feature[] | undefined
 
@@ -14,83 +20,76 @@ export class GeoJsonPreview {
     return this
   }
 
-  public getPolygonGroup() {
-    return this.polygonGeometries
-  }
-
-  public getLineStringGroup() {
-    return this.lineStringGeometries
-  }
-
-  public setPolygonMaterial(material: Material) {
-    this.polygonMaterial = material
-  }
-
-  public setLineStringMaterial(material: Material) {
-    this.lineStringMaterial = material
-  }
-
   public setFeatures(features: unknown) {
     this.features = features as Feature[]
+    return this
   }
 
-  public buildEntities() {
-    this.clearEntities()
-    if (!this.features) return
+  public build(features: unknown, opts: BuildOpts) {
+    this.features = features as Feature[]
+    this.polygonHeight = opts.polygonHeight;
+    this.lineStringWidth = opts.lineStringWidth;
+    this.lineStringHeight = opts.lineStringHeight;
+    this.lineStringSteps = opts.lineStringSteps
 
-    this.features.forEach((feature) => {
+    return this.createEntities(features);
+  }
+
+  private createEntities(features) {
+    const lineStringGeometries: ExtrudeGeometry[] = [];
+    const polygonGeometries: ExtrudeGeometry[] = [];
+
+    features.forEach((feature) => {
       if (feature.geometry.type === 'Polygon') {
         const { coordinates } = feature.geometry
         coordinates.forEach((innerCoordinates) => {
-          this.addPolygon(innerCoordinates as Position[])
+          polygonGeometries.push(
+            this.createPolygonGeometry(innerCoordinates as Position[])
+          );
         })
-      } else if (feature.geometry.type === 'LineString') {
+      }
+      
+      if (feature.geometry.type === 'LineString') {
         const { coordinates } = feature.geometry
-        this.addLineString(coordinates as Position[])
+        lineStringGeometries.push(
+          this.createLineStringGeometry(coordinates as Position[])
+        );
       }
     })
-  }
 
-  private clearEntities() {
-    this.lineStringGeometries.clear()
-    this.polygonGeometries.clear()
+    return { lineStringGeometries, polygonGeometries }
   }
-
-  private addLineString(coordinates: number[][]) {
+  
+  private createLineStringGeometry(coordinates: number[][]) {
     const points = coordinates.map((node) => {
       const v = new Vector3(node[0], node[1], 0)
       return v
     })
 
     const closedSpline = new CatmullRomCurve3(points)
-    const stepsPerLine = 38
     const shapePoints: Vector2[] = []
     const count = 4
     const extrudeRotation = 1
     const extrudeSettings = {
-      steps: stepsPerLine,
+      steps: this.lineStringSteps,
       bevelEnabled: false,
       extrudePath: closedSpline,
     }
   
     for (let i = 0; i < count; i++) {
       const a = ((2 * i + extrudeRotation) / count) * Math.PI
-  
-      shapePoints.push(new Vector2(Math.cos(a) * this.lineStringWidth, Math.sin(a) * this.lineStringWidth))
+      shapePoints.push(new Vector2(Math.cos(a) * this.lineStringHeight, Math.sin(a) * this.lineStringWidth))
     }
   
     const shape = new Shape(shapePoints)
-    const geometry = new ExtrudeGeometry(shape, extrudeSettings)
-    const mesh = new Mesh(geometry, this.lineStringMaterial)
-    mesh.geometry.computeBoundingBox()
 
-    this.lineStringGeometries.add(mesh)
+    return new ExtrudeGeometry(shape, extrudeSettings)
   }
 
-  private addPolygon(coordinates: number[][]) {
+  private createPolygonGeometry(coordinates: number[][]) {
     const extrudeSettings = {
       steps: 3,
-      depth: 1,
+      depth: this.polygonHeight,
       bevelEnabled: false,
     }
 
@@ -100,10 +99,6 @@ export class GeoJsonPreview {
       else shape.lineTo(cord[0], cord[1])
     })
 
-    const geometry = new ExtrudeGeometry(shape, extrudeSettings)
-    const mesh = new Mesh(geometry, this.polygonMaterial)
-    mesh.castShadow = true
-
-    this.polygonGeometries.add(mesh)
+    return new ExtrudeGeometry(shape, extrudeSettings)
   }
 }
