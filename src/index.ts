@@ -14,14 +14,7 @@ export class GeoJsonPreview {
   private lineStringHeight!: number
   private lineStringSteps!: number
 
-  private features: Feature[] | undefined
-
   constructor() {
-    return this
-  }
-
-  public setFeatures(features: unknown) {
-    this.features = features as Feature[]
     return this
   }
 

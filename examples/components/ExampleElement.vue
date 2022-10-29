@@ -10,7 +10,6 @@ const props = defineProps<{
 }>()
 
 const element: Ref<HTMLElement | null> = ref(null);
-
 const scene = new Scene();
 
 scene.add(
@@ -81,8 +80,8 @@ onMounted(() => {
   const preview = new GeoJsonPreview();
   const { lineStringGeometries, polygonGeometries } = preview.build(features, {
     polygonHeight: 1,
-    lineStringWidth: 0.3,
-    lineStringHeight: 0.3,
+    lineStringWidth: 0.25,
+    lineStringHeight: 0.1,
     lineStringSteps: 96,
   });
 
