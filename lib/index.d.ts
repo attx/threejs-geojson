@@ -11,9 +11,7 @@ export declare class GeoJsonPreview {
     private lineStringWidth;
     private lineStringHeight;
     private lineStringSteps;
-    private features;
     constructor();
-    setFeatures(features: unknown): this;
     build(features: Feature[], opts: BuildOpts): {
         lineStringGeometries: ExtrudeGeometry[];
         polygonGeometries: ExtrudeGeometry[];

@@ -52,29 +52,27 @@ export class GeoJsonPreview {
     return { lineStringGeometries, polygonGeometries }
   }
   
-  private createLineStringGeometry(coordinates: number[][]) {
-    const points = coordinates.map((node) => {
-      const v = new Vector3(node[0], node[1], 0)
-      return v
-    })
-
-    const closedSpline = new CatmullRomCurve3(points)
-    const shapePoints: Vector2[] = []
+  private createLineStringGeometry(coordinates: number[][]) {  
     const count = 4
     const extrudeRotation = 1
+    const shapePoints: Vector2[] = []
+
+    for (let i = 0; i < count; i++) {
+      const a = ((2 * i + extrudeRotation) / count) * Math.PI
+      shapePoints.push(
+        new Vector2(Math.cos(a) * (this.lineStringHeight * 0.7),
+        Math.sin(a) * this.lineStringWidth)
+      )
+    }
+  
+    const points = coordinates.map((node) => new Vector3(node[0], node[1], this.lineStringHeight / 2))
     const extrudeSettings = {
       steps: this.lineStringSteps,
       bevelEnabled: false,
-      extrudePath: closedSpline,
+      extrudePath: new CatmullRomCurve3(points),
     }
-  
-    for (let i = 0; i < count; i++) {
-      const a = ((2 * i + extrudeRotation) / count) * Math.PI
-      shapePoints.push(new Vector2(Math.cos(a) * this.lineStringHeight, Math.sin(a) * this.lineStringWidth))
-    }
-  
-    const shape = new Shape(shapePoints)
 
+    const shape = new Shape(shapePoints)
     return new ExtrudeGeometry(shape, extrudeSettings)
   }
 

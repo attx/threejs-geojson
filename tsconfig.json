@@ -13,6 +13,6 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["examples/**/*.ts", "examples/**/*.d.ts", "examples/**/*.tsx", "examples/**/*.vue"],
+  "include": ["example/**/*.ts", "example/**/*.d.ts", "example/**/*.tsx", "example/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
