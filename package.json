@@ -6,7 +6,8 @@
   "typings": "lib/index.d.ts",
   "type": "module",
   "files": [
-    "lib/*"
+    "lib/*",
+    "src/*"
   ],
   "scripts": {
     "build": "npm run build:lib && npm run build:example",
