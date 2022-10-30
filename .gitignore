@@ -4,8 +4,6 @@
 # Directories
 node_modules
 coverage
-# lib
-dist
 
 # Logs
 logs
