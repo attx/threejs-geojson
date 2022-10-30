@@ -2,10 +2,10 @@ import { AmbientLight, DirectionalLight, Object3D, PCFSoftShadowMap, Perspective
 import { OrbitControls } from '../utils/OrbitControls';
 
 export class BasicScene {
-  element: HTMLElement;
+  element!: HTMLElement;
   scene = new Scene();
-  camera: PerspectiveCamera;
-  renderer: WebGLRenderer;
+  camera!: PerspectiveCamera;
+  renderer!: WebGLRenderer;
 
   public setup(element: HTMLElement) {
     this.element = element;
