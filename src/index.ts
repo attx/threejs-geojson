@@ -1,4 +1,4 @@
-import { Feature, Polygon, LineString } from "@turf/turf";
+import { Feature, Polygon, LineString, Properties } from "@turf/turf";
 import { CatmullRomCurve3, ExtrudeGeometry, Shape, Vector2, Vector3 } from "three"
 
 export interface BuildOpts {
@@ -36,7 +36,7 @@ export class GeoJsonPreview {
         const { coordinates } = feature.geometry as Polygon
         coordinates.forEach((innerCoordinates) => {
           polygonGeometries.push(
-            this.createPolygonGeometry(innerCoordinates)
+            this.createPolygonGeometry(innerCoordinates, feature.properties)
           );
         })
       }
@@ -76,10 +76,20 @@ export class GeoJsonPreview {
     return new ExtrudeGeometry(shape, extrudeSettings)
   }
 
-  private createPolygonGeometry(coordinates: number[][]) {
+  private createPolygonGeometry(coordinates: number[][], properties: Properties) {
+    let height = this.polygonHeight;
+
+    if (properties) {
+      const levels = properties['building:levels'] || 0;
+      height += levels * (this.polygonHeight / 2);
+
+      const roofLevels = properties['roof:levels'] || 0;
+      height += roofLevels * (this.polygonHeight / 2);
+    }
+
     const extrudeSettings = {
       steps: 3,
-      depth: this.polygonHeight,
+      depth: height,
       bevelEnabled: false,
     }
 
