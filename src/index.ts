@@ -79,6 +79,7 @@ export class GeoJsonPreview {
   private createPolygonGeometry(coordinates: number[][], properties: Properties) {
     let height = this.polygonHeight;
 
+    console.log(properties);
     if (properties) {
       const levels = properties['building:levels'] || 0;
       height += levels * (this.polygonHeight / 2);
