@@ -2,27 +2,37 @@ import { Feature, Polygon, LineString, Properties } from "@turf/turf";
 import { CatmullRomCurve3, ExtrudeGeometry, Shape, Vector2, Vector3 } from "three"
 
 export interface BuildOpts {
-  polygonHeight: number
   lineStringWidth: number
   lineStringHeight: number
   lineStringSteps: number
+
+  polygonMinHeight: number
+  polygonMaxHeight: number
+  polygonHeightPerLevel: number
 }
 
 export class GeoJsonPreview {
-  private polygonHeight!: number
   private lineStringWidth!: number
   private lineStringHeight!: number
   private lineStringSteps!: number
+
+  private polygonMinHeight!: number
+  private polygonMaxHeight!: number
+  private polygonHeightPerLevel!: number
 
   constructor() {
     return this
   }
 
   public build(features: Feature[], opts: BuildOpts) {
-    this.polygonHeight = opts.polygonHeight;
+    this.polygonMinHeight = opts.polygonMinHeight;
     this.lineStringWidth = opts.lineStringWidth;
     this.lineStringHeight = opts.lineStringHeight;
     this.lineStringSteps = opts.lineStringSteps
+
+    this.polygonMinHeight = opts.polygonMinHeight
+    this.polygonMaxHeight = opts.polygonMaxHeight
+    this.polygonHeightPerLevel = opts.polygonHeightPerLevel
 
     return this.createEntities(features);
   }
@@ -76,20 +86,21 @@ export class GeoJsonPreview {
     return new ExtrudeGeometry(shape, extrudeSettings)
   }
 
-  private createPolygonGeometry(coordinates: number[][], properties: Properties) {
-    let height = this.polygonHeight;
+  private getHeightFromProperties(properties: Properties) {
+    let height = this.polygonMinHeight;
 
-    if (properties) {
-      const levels = properties['building:levels'] || 0;
-      height += levels * (this.polygonHeight / 2);
-
-      const roofLevels = properties['roof:levels'] || 0;
-      height += roofLevels * (this.polygonHeight / 2);
+    if (properties && properties['building:levels']) {
+      height += this.polygonHeightPerLevel * properties['building:levels'];
     }
 
+    if (height > this.polygonMaxHeight) return this.polygonMaxHeight;
+    return height;
+  }
+
+  private createPolygonGeometry(coordinates: number[][], properties: Properties) {
     const extrudeSettings = {
       steps: 3,
-      depth: height,
+      depth: this.getHeightFromProperties(properties),
       bevelEnabled: false,
     }
 
